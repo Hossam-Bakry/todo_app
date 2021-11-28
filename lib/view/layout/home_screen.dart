@@ -31,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: screens[currentIndex],
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          TodoViewModel.showBottomSheet(context);
+          TodoViewModel.showAddTaskSheet(context);
         },
         child: const Icon(Icons.add),
       ),

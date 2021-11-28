@@ -3,7 +3,7 @@ class Todo {
   String id;
   String title;
   String description;
-  DateTime date;
+  String date;
   String time;
   bool isDone;
 
@@ -18,10 +18,10 @@ class Todo {
 
   Todo.fromJson(Map<String, Object?> json)
       : this(
-          id: json['id']! as String,
+    id: json['id']! as String,
           title: json['title']! as String,
           description: json['description']! as String,
-          date: DateTime.fromMillisecondsSinceEpoch(json['date'] as int),
+          date: json['date']! as String,
           time: json['time'] as String,
           isDone: json['isDone'] as bool,
         );
@@ -31,7 +31,7 @@ class Todo {
       'id': id,
       'title': title,
       'description': description,
-      'date': date.millisecondsSinceEpoch,
+      'date': date,
       'time': time,
       'isDone': isDone,
     };

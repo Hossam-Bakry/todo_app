@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_app/model/todo_model.dart';
+import 'package:todo_app/shared/network/remote/firestore_utils.dart';
 import 'package:todo_app/shared/provider/app_provider.dart';
 import 'package:todo_app/shared/styles/themes.dart';
 import 'package:todo_app/view_model/todo_screen_view_model.dart';
 
-class AddTodoTaskWidget extends StatelessWidget {
+class EditTaskWidget extends StatelessWidget {
+  Todo item;
+  Function onClick;
+
+  EditTaskWidget(this.item, this.onClick);
+
   var formKey = GlobalKey<FormState>();
   TextEditingController titleController = TextEditingController();
   TextEditingController descrpController = TextEditingController();
@@ -12,12 +19,11 @@ class AddTodoTaskWidget extends StatelessWidget {
   TextEditingController timeController = TextEditingController();
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
-  String title = '';
-  String description = '';
 
   @override
   Widget build(BuildContext context) {
     var provider = Provider.of<AppProvider>(context);
+
     return SingleChildScrollView(
       child: Container(
         margin: const EdgeInsets.all(6),
@@ -35,7 +41,7 @@ class AddTodoTaskWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Text(
-                'Add New Task',
+                'Edit Task',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 18,
@@ -58,10 +64,15 @@ class AddTodoTaskWidget extends StatelessWidget {
                   }
                   return null;
                 },
-                onChanged: (String? value) {
-                  title = value!;
+                onChanged: (String value) {
+                  if (value != null && value.isNotEmpty) {
+                    FirestroeUtils.updateTask(
+                            item: item, key: 'title', value: value)
+                        .then((value) {});
+                    item.title = value;
+                  }
+                  provider.todoItems();
                 },
-                keyboardType: TextInputType.text,
               ),
               const SizedBox(height: 15.0),
               TextFormField(
@@ -87,8 +98,14 @@ class AddTodoTaskWidget extends StatelessWidget {
                   }
                   return null;
                 },
-                onChanged: (String? value) {
-                  description = value!;
+                onChanged: (String value) {
+                  if (value != null && value.isNotEmpty) {
+                    FirestroeUtils.updateTask(
+                            item: item, key: 'description', value: value)
+                        .then((value) {});
+                    item.description = value;
+                  }
+                  provider.todoItems();
                 },
               ),
               const SizedBox(height: 15.0),
@@ -109,6 +126,7 @@ class AddTodoTaskWidget extends StatelessWidget {
                       ),
                       controller: dateController,
                       onTap: () {
+                        item.date = dateController.text;
                         TodoViewModel.showSelectedDate(
                           context,
                           dateController,
@@ -132,6 +150,7 @@ class AddTodoTaskWidget extends StatelessWidget {
                       ),
                       controller: timeController,
                       onTap: () {
+                        item.time = timeController.text;
                         TodoViewModel.showSelectTime(
                           context,
                           timeController,
@@ -150,18 +169,12 @@ class AddTodoTaskWidget extends StatelessWidget {
                     color: MyThemeData.primaryColor),
                 child: MaterialButton(
                   onPressed: () {
-                    TodoViewModel.addtodo(
-                      context,
-                      formKey,
-                      title,
-                      description,
-                      dateController.text,
-                      timeController.text,
-                    );
+                    onClick(item);
                     provider.todoItems();
+                    Navigator.pop(context);
                   },
                   child: const Text(
-                    'Add',
+                    'Save Changes',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,

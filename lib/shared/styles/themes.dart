@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class MyThemeData {
   static const Color primaryColor = Color.fromRGBO(93, 156, 236, 1.0);
+  static const Color doneColor = Color.fromRGBO(97, 231, 87, 1.0);
 
   static ThemeData lightTheme = ThemeData(
     scaffoldBackgroundColor: const Color.fromRGBO(223, 236, 219, 1),
