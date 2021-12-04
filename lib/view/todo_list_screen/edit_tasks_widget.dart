@@ -6,17 +6,24 @@ import 'package:todo_app/shared/provider/app_provider.dart';
 import 'package:todo_app/shared/styles/themes.dart';
 import 'package:todo_app/view_model/todo_screen_view_model.dart';
 
-class EditTaskWidget extends StatelessWidget {
+class EditTaskWidget extends StatefulWidget {
   Todo item;
   Function onClick;
 
   EditTaskWidget(this.item, this.onClick);
 
-  var formKey = GlobalKey<FormState>();
+  @override
+  State<EditTaskWidget> createState() => _EditTaskWidgetState();
+}
+
+class _EditTaskWidgetState extends State<EditTaskWidget> {
+  var formEditKey = GlobalKey<FormState>();
+
   TextEditingController titleController = TextEditingController();
   TextEditingController descrpController = TextEditingController();
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
+
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
 
@@ -36,7 +43,7 @@ class EditTaskWidget extends StatelessWidget {
           color: Colors.white,
         ),
         child: Form(
-          key: formKey,
+          key: formEditKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -67,9 +74,9 @@ class EditTaskWidget extends StatelessWidget {
                 onChanged: (String value) {
                   if (value != null && value.isNotEmpty) {
                     FirestroeUtils.updateTask(
-                            item: item, key: 'title', value: value)
+                            item: widget.item, key: 'title', value: value)
                         .then((value) {});
-                    item.title = value;
+                    widget.item.title = value;
                   }
                   provider.todoItems();
                 },
@@ -101,9 +108,9 @@ class EditTaskWidget extends StatelessWidget {
                 onChanged: (String value) {
                   if (value != null && value.isNotEmpty) {
                     FirestroeUtils.updateTask(
-                            item: item, key: 'description', value: value)
+                            item: widget.item, key: 'description', value: value)
                         .then((value) {});
-                    item.description = value;
+                    widget.item.description = value;
                   }
                   provider.todoItems();
                 },
@@ -126,11 +133,20 @@ class EditTaskWidget extends StatelessWidget {
                       ),
                       controller: dateController,
                       onTap: () {
-                        item.date = dateController.text;
+                        widget.item.date = dateController.text;
                         TodoViewModel.showSelectedDate(
                           context,
                           dateController,
                         );
+                      },
+                      onChanged: (String value) {
+                        if (value != null && value.isNotEmpty) {
+                          FirestroeUtils.updateTask(
+                                  item: widget.item, key: 'date', value: value)
+                              .then((value) {});
+                          widget.item.date = value;
+                        }
+                        provider.todoItems();
                       },
                     ),
                   ),
@@ -150,12 +166,21 @@ class EditTaskWidget extends StatelessWidget {
                       ),
                       controller: timeController,
                       onTap: () {
-                        item.time = timeController.text;
+                        widget.item.time = timeController.text;
                         TodoViewModel.showSelectTime(
                           context,
                           timeController,
-                          selectedTime,
+                          // selectedTime,
                         );
+                      },
+                      onChanged: (String value) {
+                        if (value != null && value.isNotEmpty) {
+                          FirestroeUtils.updateTask(
+                                  item: widget.item, key: 'time', value: value)
+                              .then((value) {});
+                          widget.item.time = value;
+                        }
+                        provider.todoItems();
                       },
                     ),
                   ),
@@ -169,9 +194,11 @@ class EditTaskWidget extends StatelessWidget {
                     color: MyThemeData.primaryColor),
                 child: MaterialButton(
                   onPressed: () {
-                    onClick(item);
-                    provider.todoItems();
-                    Navigator.pop(context);
+                    if (formEditKey.currentState!.validate()) {
+                      widget.onClick(widget.item);
+                      provider.todoItems();
+                      Navigator.pop(context);
+                    }
                   },
                   child: const Text(
                     'Save Changes',

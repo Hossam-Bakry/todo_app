@@ -10,6 +10,7 @@ class TodoViewModel {
     BuildContext context,
   ) {
     showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) => AddTodoTaskWidget(),
       shape: const RoundedRectangleBorder(
@@ -36,8 +37,8 @@ class TodoViewModel {
     ).then((DateTime? value) {
       if (value != null) {
         dateController.text = DateFormat.yMMMd().format(value);
+        print(dateController.text);
       }
-      return;
     }).catchError((error) {
       print(error.toString());
     });
@@ -46,14 +47,14 @@ class TodoViewModel {
   static void showSelectTime(
     BuildContext context,
     TextEditingController timeController,
-    TimeOfDay selectedTime,
+      // TimeOfDay selectedTime,
   ) {
     showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
     ).then((value) {
       timeController.text = value!.format(context).toString();
-      selectedTime = value;
+      // selectedTime = value;
     });
   }
 

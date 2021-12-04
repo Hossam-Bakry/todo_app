@@ -13,6 +13,7 @@ class TodoListScreen extends StatefulWidget {
 class _TodoListScreenState extends State<TodoListScreen> {
   DatePickerController dateController = DatePickerController();
   DateTime selectDate = DateTime.now();
+  var formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -32,23 +33,31 @@ class _TodoListScreenState extends State<TodoListScreen> {
                 child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 5),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.35),
+                    color: provider.appThemeMode == ThemeMode.dark
+                        ? Colors.black.withOpacity(0.1)
+                        : Colors.white.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(8),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.white.withOpacity(0.2),
+                        color: provider.appThemeMode == ThemeMode.dark
+                            ? Colors.black.withOpacity(0.1)
+                            : Colors.white.withOpacity(0.3),
                         blurRadius: 20,
                       )
                     ],
                   ),
                   child: DatePicker(
                     DateTime.now().subtract(
-                      const Duration(days: 10),
+                      const Duration(days: 3),
                     ),
                     height: 80,
-                    initialSelectedDate: selectDate,
-                    selectionColor: Colors.white,
-                    selectedTextColor: Colors.black,
+                    initialSelectedDate: DateTime.now(),
+                    selectionColor: provider.appThemeMode == ThemeMode.dark
+                        ? Colors.black
+                        : Colors.white,
+                    selectedTextColor: provider.appThemeMode == ThemeMode.dark
+                        ? Colors.white
+                        : Colors.black,
                     controller: dateController,
                     onDateChange: (date) {
                       provider.setNewDate(DateFormat.yMMMd().format(date));
@@ -62,13 +71,13 @@ class _TodoListScreenState extends State<TodoListScreen> {
         ),
         SizedBox(height: size.height * .04),
         Expanded(
-            child: ListView.builder(
-          itemBuilder: (BuildContext buildContext, int index) =>
-              TodoItem(provider.items[index]),
-          itemCount: provider.items.length,
-        ))
+          child: ListView.builder(
+            itemBuilder: (BuildContext buildContext, int index) =>
+                TodoItem(provider.items[index]),
+            itemCount: provider.items.length,
+          ),
+        ),
       ],
     );
   }
 }
-
