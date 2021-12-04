@@ -43,9 +43,11 @@ class TodoItem extends StatelessWidget {
           child: Container(
             width: double.infinity,
             height: 120,
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.all(
+            decoration: BoxDecoration(
+              color: provider.appThemeMode == ThemeMode.dark
+                  ? const Color.fromRGBO(20, 25, 34, 1.0)
+                  : Colors.white,
+              borderRadius: const BorderRadius.all(
                 Radius.circular(15),
               ),
             ),
@@ -83,10 +85,20 @@ class TodoItem extends StatelessWidget {
                       const SizedBox(height: 15),
                       Row(
                         children: [
-                          const Icon(Icons.schedule),
+                          Icon(
+                            Icons.schedule,
+                            color: provider.appThemeMode == ThemeMode.dark
+                                ? Colors.white
+                                : Colors.black,
+                          ),
                           const SizedBox(width: 10),
                           Text(
                             item.time,
+                            style: TextStyle(
+                              color: provider.appThemeMode == ThemeMode.dark
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
                           ),
                         ],
                       ),
