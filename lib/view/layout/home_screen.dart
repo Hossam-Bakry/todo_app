@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_app/shared/provider/app_provider.dart';
 import 'package:todo_app/view/settings_screen/settings_screen.dart';
 import 'package:todo_app/view/todo_list_screen/todo_list_screen.dart';
 import 'package:todo_app/view_model/todo_screen_view_model.dart';
@@ -19,19 +21,26 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var provider = Provider.of<AppProvider>(context);
     return Scaffold(
       appBar: AppBar(
         leadingWidth: 20,
         leading: const SizedBox(),
         title: Text(
           currentIndex == 0 ? 'To Do List' : 'Settings',
-          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: provider.appThemeMode == ThemeMode.dark
+                ? Colors.black
+                : Colors.white,
+          ),
         ),
       ),
       body: screens[currentIndex],
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          TodoViewModel.showBottomSheet(context);
+          TodoViewModel.showAddTaskSheet(context);
         },
         child: const Icon(Icons.add),
       ),
@@ -50,11 +59,11 @@ class _HomeScreenState extends State<HomeScreen> {
           },
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(Icons.list),
+              icon: ImageIcon(AssetImage('assets/images/ic_menu.png')),
               label: '',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
+              icon: ImageIcon(AssetImage('assets/images/ic-setting.png')),
               label: '',
             ),
           ],
